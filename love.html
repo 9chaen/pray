@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>기도 중...</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    #category {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    #log {
+      margin-top: 20px;
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+    }
+
+    .entry {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .text {
+      flex: 1 1 auto;
+      min-width: 0;
+      white-space: pre-wrap;
+    }
+
+    .pray-button {
+      flex: 0 0 auto;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      padding: 4px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .count {
+      flex: 0 0 auto;
+      font-weight: bold;
+      color: #555;
+      white-space: nowrap;
+    }
+
+    .verse {
+      flex-basis: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #e6e6e6;
+      border-left: 4px solid #777777;
+      font-style: italic;
+      word-break: keep-all;
+    }
+
+    @keyframes glow {
+      0% {
+        text-shadow: 0 0 0px transparent;
+        color:#a6a6a6;
+;
+      }
+      50% {
+        text-shadow: 0 0 10px #656565, 0 0 20px #656565;
+        color: #000000;
+      }
+      100% {
+        text-shadow: 0 0 0px transparent;
+        color: #000000;
+      }
+    }
+
+    .glow {
+      animation: glow 4s cubic-bezier(0.75, -0.18, 0.58, 1.01);
+      animation-fill-mode: forwards;
+    }
+    header {
+        display: flex;
+        justify-content: space-between;
+        position:relative;
+      }
+      #gnb {
+        display:flex;
+        justify-content: flex-end;
+        padding-top:23px;
+      }
+      #gnb a {
+            text-decoration-line: none;
+            font-size: 13pt;
+        }
+      #gnb a:link {
+            color:black;
+        }
+      #gnb a:visited {
+            color:black;
+        }
+      #gnb a:hover {
+            color:black;
+        }
+      #gnb a:active {
+            color:black;
+        }
+  </style>
+</head>
+<body>
+  <header>
+  <h1 id="category">다시 기도해 보세요...</h1>
+  <div id="gnb"><a href="index.html">처음으로</a></div>
+  </header>
+
+  <input type="text" id="textInput" placeholder="지혜롭게 기도하세요." />
+  <button id="prayBtn">기도</button>
+
+  <div id="log"></div>
+
+  <script>
+    const categoryTitle = new URLSearchParams(window.location.search).get('category') || '기도';
+    document.getElementById('category').textContent = `다시 기도해 보세요...`;
+
+    const bibleVerses = [
+      '율법학자가 대답했습니다. “‘네 마음을 다하고 네 목숨을 다하고 네 힘을 다하고 네 뜻을 다해 주 네 하나님을 사랑하라’고 했고, 또 ‘네 이웃을 네 몸같이 사랑하라’고 했습니다.” (누가복음 10:27)',
+      '사랑은 오래 참고 친절하며 사랑은 시기하지 않으며 자랑하지 않으며 교만하지 않으며 무례하지 않으며 자기 유익을 구하지 않으며 성내지 않으며 원한을 품지 않으며 불의를 기뻐하지 않으며 진리와 함께 기뻐하고 모든 것을 덮어 주고 모든 것을 믿으며 모든 것을 바라고 모든 것을 견딥니다. 사랑은 결코 없어지지 않습니다. (고린도전서 13:4-8a)',
+      '무엇보다도 서로 깊이 사랑하십시오. 사랑은 허다한 죄를 덮습니다. (베드로전서 4:8)',
+      '사랑에는 두려움이 없습니다. 온전한 사랑은 두려움을 내쫓습니다. 두려움은 징벌과 관련이 있기 때문입니다. 두려워하는 사람은 아직 사랑 안에서 온전케 되지 못한 사람입니다. (요한일서 4:18)',
+      '사랑하는 여러분, 우리가 서로 사랑합시다. 사랑은 하나님에게서 난 것이기 때문입니다. 사랑하는 사람은 누구나 다 하나님께로부터 났고 하나님을 압니다. (요한일서 4:7)',
+      '내가 사랑하는 그분이 입을 열어 내게 말씀하십니다. “내 사랑이여, 일어나세요. 아름다운 내 사람이여, 나와 함께 가요. (아가 2:10)',
+      '미움은 다툼을 일으켜도 사랑은 모든 허물을 덮는다. (잠언 10:12)',
+      '사랑과 성실을 저버리지 말고 그것을 네 목에 매고 네 마음 판에 새겨라. 그러면 네가 하나님과 사람 앞에서 사랑과 귀중히 여김을 얻을 것이다. (잠언 3:3-4)',
+      '응답 없음. 하나님의 뜻이 무엇일지 다시 생각해 보세요! 하나님 앞에 더 중요한 인생의 문제가 있을 거예요.'
+    ];
+
+    function getRandomVerse() {
+      const randomIndex = Math.floor(Math.random() * bibleVerses.length);
+      return bibleVerses[randomIndex];
+    }
+
+    function logText() {
+      const input = document.getElementById('textInput');
+      const text = input.value.trim();
+      if (text === "") return;
+
+      const logDiv = document.getElementById('log');
+
+      const entry = document.createElement('div');
+      entry.className = 'entry';
+
+      const textDiv = document.createElement('div');
+      textDiv.className = 'text';
+      textDiv.textContent = text;
+
+      const prayButton = document.createElement('button');
+      prayButton.className = 'pray-button';
+      prayButton.textContent = '𓌹♱𓌺기도하기';
+
+      const countSpan = document.createElement('span');
+      countSpan.className = 'count';
+      countSpan.textContent = '0회';
+
+      let count = 0;
+      const prayLimit = Math.floor(Math.random() * 20) + 5;
+
+      const normalPrayHandler = () => {
+        count++;
+        countSpan.textContent = `${count}회`;
+
+        if (count === prayLimit) {
+          const verse = document.createElement('div');
+          verse.className = 'verse glow';   // ✅ 네온 효과
+          verse.textContent = `𓆩❦𓆪응답: "${getRandomVerse()}"`;
+
+          textDiv.classList.add('glow');    // ✅ 기도 문장도 반짝이게
+
+          entry.appendChild(verse);
+          prayButton.disabled = true;
+        }
+      };
+
+      prayButton.addEventListener('click', normalPrayHandler);
+
+      entry.appendChild(textDiv);
+      entry.appendChild(prayButton);
+      entry.appendChild(countSpan);
+      logDiv.appendChild(entry);
+
+      input.value = "";
+    }
+
+    document.getElementById('prayBtn').addEventListener('click', logText);
+  </script>
+</body>
+</html>
+

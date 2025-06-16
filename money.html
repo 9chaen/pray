@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>기도 중...</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    #category {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    #log {
+      margin-top: 20px;
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+    }
+
+    .entry {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .text {
+      flex: 1 1 auto;
+      min-width: 0;
+      white-space: pre-wrap;
+    }
+
+    .pray-button {
+      flex: 0 0 auto;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      padding: 4px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .count {
+      flex: 0 0 auto;
+      font-weight: bold;
+      color: #555;
+      white-space: nowrap;
+    }
+
+    .verse {
+      flex-basis: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #e6e6e6;
+      border-left: 4px solid #777777;
+      font-style: italic;
+      word-break: keep-all;
+    }
+
+    @keyframes glow {
+      0% {
+        text-shadow: 0 0 0px transparent;
+        color:#a6a6a6;
+;
+      }
+      50% {
+        text-shadow: 0 0 10px #656565, 0 0 20px #656565;
+        color: #000000;
+      }
+      100% {
+        text-shadow: 0 0 0px transparent;
+        color: #000000;
+      }
+    }
+
+    .glow {
+      animation: glow 4s cubic-bezier(0.75, -0.18, 0.58, 1.01);
+      animation-fill-mode: forwards;
+    }
+    header {
+        display: flex;
+        justify-content: space-between;
+        position:relative;
+      }
+      #gnb {
+        display:flex;
+        justify-content: flex-end;
+        padding-top:23px;
+      }
+      #gnb a {
+            text-decoration-line: none;
+            font-size: 13pt;
+        }
+      #gnb a:link {
+            color:black;
+        }
+      #gnb a:visited {
+            color:black;
+        }
+      #gnb a:hover {
+            color:black;
+        }
+      #gnb a:active {
+            color:black;
+        }
+  </style>
+</head>
+<body>
+  <header>
+  <h1 id="category">다시 기도해 보세요...</h1>
+  <div id="gnb"><a href="index.html">처음으로</a></div>
+  </header>
+
+  <input type="text" id="textInput" placeholder="지혜롭게 기도하세요." />
+  <button id="prayBtn">기도</button>
+
+  <div id="log"></div>
+
+  <script>
+    const categoryTitle = new URLSearchParams(window.location.search).get('category') || '기도';
+    document.getElementById('category').textContent = `다시 기도해 보세요...`;
+
+    const bibleVerses = [
+      '거저 주는 사람은 더 많이 얻게 되지만 지나치게 아끼는 사람은 가난에 이른다. (잠언 11:24)',
+      '부자가 되려고 일하지 말고 네 자신의 지혜를 버려라. 너는 별 것도 아닌 것에 주목하지 마라. 재물은 분명 스스로 날개를 달고 독수리가 하늘로 날아가듯 날아가 버린다.(잠언 23:4-5)',
+      '그러고는 사람들에게 말씀하셨습니다. “너희는 조심해서 모든 탐욕을 삼가라! 사람의 생명이 그 재산의 넉넉함에 있는 것이 아니다.” (누가복음 12:15)',
+      '그러므로 무엇을 먹을까, 무엇을 마실까, 무엇을 입을까, 걱정하지 말라. 이 모든 것은 이방 사람들이나 추구하는 것이다. 하늘에 계신 너희 아버지께서는 너희에게 이런 것이 필요하다는 것을 아신다. 오직 너희는 먼저 그 나라와 그 의를 구하라. 그러면 이 모든 것도 너희에게 더해 주실 것이다. (마태복음 6:31-33)',
+      '그러나 너희 하나님 여호와를 기억하라. 이는 너희에게 재산을 얻을 수 있는 능력을 주셔서 너희 조상들에게 맹세하신 그분의 언약을 오늘날과 같이 이루어지게 하시기 위함이셨다. (신명기 8:18)',
+      '그 집에 부와 재물이 있고 의로움도 영원히 계속될 것이다. (시편 112:3)',
+      '네 재물과 네 수확물의 첫 열매로 여호와를 공경하여라. 그러면 네 창고가 가득 차고 네 포도주 통에 새 포도주가 넘칠 것이다. (잠언 3:9-10)',
+      '나를 사랑하는 사람들에게는 재산을 상속받게 해 그들의 창고가 가득 차게 할 것이다. (잠언 8:21)',
+      '응답 없음. 하나님의 뜻이 무엇일지 다시 생각해 보세요! 하나님 앞에 더 중요한 인생의 문제가 있을 거예요.'
+    ];
+
+    function getRandomVerse() {
+      const randomIndex = Math.floor(Math.random() * bibleVerses.length);
+      return bibleVerses[randomIndex];
+    }
+
+    function logText() {
+      const input = document.getElementById('textInput');
+      const text = input.value.trim();
+      if (text === "") return;
+
+      const logDiv = document.getElementById('log');
+
+      const entry = document.createElement('div');
+      entry.className = 'entry';
+
+      const textDiv = document.createElement('div');
+      textDiv.className = 'text';
+      textDiv.textContent = text;
+
+      const prayButton = document.createElement('button');
+      prayButton.className = 'pray-button';
+      prayButton.textContent = '𓌹♱𓌺기도하기';
+
+      const countSpan = document.createElement('span');
+      countSpan.className = 'count';
+      countSpan.textContent = '0회';
+
+      let count = 0;
+      const prayLimit = Math.floor(Math.random() * 20) + 5;
+
+      const normalPrayHandler = () => {
+        count++;
+        countSpan.textContent = `${count}회`;
+
+        if (count === prayLimit) {
+          const verse = document.createElement('div');
+          verse.className = 'verse glow';   // ✅ 네온 효과
+          verse.textContent = `𓆩❦𓆪응답: "${getRandomVerse()}"`;
+
+          textDiv.classList.add('glow');    // ✅ 기도 문장도 반짝이게
+
+          entry.appendChild(verse);
+          prayButton.disabled = true;
+        }
+      };
+
+      prayButton.addEventListener('click', normalPrayHandler);
+
+      entry.appendChild(textDiv);
+      entry.appendChild(prayButton);
+      entry.appendChild(countSpan);
+      logDiv.appendChild(entry);
+
+      input.value = "";
+    }
+
+    document.getElementById('prayBtn').addEventListener('click', logText);
+  </script>
+</body>
+</html>
+

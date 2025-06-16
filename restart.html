@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>다시 기도하기</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 40px;
+      text-align: center;
+      
+    }
+    button {
+      width:8vw;
+      height:5vh;
+      padding: 12px 20px;
+      margin: 10px;
+      font-size: 0.7vw;
+      word-break: keep-all;
+      cursor: pointer;
+      border-radius: 10px;
+      color:white;
+      background-color:  rgb(178, 178, 178);
+      border: 1px solid #ccc;
+    }
+    #container {
+      position:fixed;
+      top:0;
+      left:0;
+      width:100vw;
+      height:100vh;
+      background-image: url('background2.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      display:flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding:20px;
+    }
+    #categories {
+      display:flex;
+      align-items: center;
+    }
+    h1 {
+      margin-top: 500px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+  <h1>무엇을 위해 기도하시겠어요?</h1>
+  <div id="categories">
+    <button onclick="goToPage('학업')">ᕷ˖°학업ᯤᯤ</button>
+    <button onclick="goToPage('취업')">ꢾ୧취업・. 𓋼𓍊</button>
+    <button onclick="goToPage('연애')">✩⡱연애♡̈</button>
+    <button onclick="goToPage('돈')">⅏돈⋰˚★</button>
+    <button onclick="goToPage('성공')">𓍯성공༊*·˚</button>
+    <button onclick="goToPage('인생')">˖◛⁺˖인생 고민✩⡱</button>
+  </div>
+  </div>
+
+  <script>
+    function goToPage(category) {
+      const pageMap = {
+        '학업': 'study.html',
+        '취업': 'job.html',
+        '연애': 'love.html',
+        '돈': 'money.html',
+        '성공': 'success.html',
+        '인생': 'life.html'
+      };
+
+      const targetPage = pageMap[category];
+
+      if (targetPage) {
+        window.location.href = targetPage;
+      } else {
+        alert('올바르지 않은 카테고리입니다.');
+      }
+    }
+  </script>
+</body>
+
+</html>

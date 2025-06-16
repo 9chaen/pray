@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기도해 보세요...</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      #log {
+        margin-top: 20px;
+        border-top: 1px solid #ccc;
+        padding-top: 10px;
+      }
+      .entry {
+        padding: 8px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .text {
+        flex-grow: 1;
+      }
+      .pray-button {
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        padding: 4px 10px;
+        cursor: pointer;
+      }
+      .count {
+        font-weight: bold;
+        color: #555;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        position:relative;
+      }
+      #gnb {
+        display:flex;
+        justify-content: flex-end;
+        padding-top:23px;
+      }
+      #gnb a {
+            text-decoration-line: none;
+            font-size: 13pt;
+        }
+      #gnb a:link {
+            color:black;
+        }
+      #gnb a:visited {
+            color:black;
+        }
+      #gnb a:hover {
+            color:black;
+        }
+      #gnb a:active {
+            color:black;
+        }
+    </style>
+</head>
+<body>
+  <header>
+  <h1>기도해 보세요...</h1>
+  <div id="gnb"><a href="index.html">처음으로</a></div>
+  </header>
+  <input type="text" id="textInput" placeholder="그 나라와 그 의를 구하라." />
+  <button onclick="logText()">기도</button>
+
+  <div id="log"></div>
+
+  <script>
+    function logText() {
+      const input = document.getElementById('textInput');
+      const text = input.value.trim();
+      if (text === "") return;
+
+      const logDiv = document.getElementById('log');
+
+      const entry = document.createElement('div');
+      entry.className = 'entry';
+
+      const textDiv = document.createElement('div');
+      textDiv.className = 'text';
+      textDiv.textContent = text;
+
+      const prayButton = document.createElement('button');
+      prayButton.className = 'pray-button';
+      prayButton.textContent = '𓌹♱𓌺기도하기';
+
+      const countSpan = document.createElement('span');
+      countSpan.className = 'count';
+      countSpan.textContent = '0회';
+
+      let count = 0;
+
+      const normalPrayHandler = () => {
+        count++;
+        countSpan.textContent = `${count}회`;
+        if (count > 50) {
+          // 버튼 동작 전환
+          prayButton.textContent = '응답받지 못했나요?';
+          prayButton.removeEventListener('click', normalPrayHandler);
+          prayButton.addEventListener('click', () => {
+            window.location.href = 'reason.html';
+          });
+        }
+      };
+
+      prayButton.addEventListener('click', normalPrayHandler);
+
+      entry.appendChild(textDiv);
+      entry.appendChild(prayButton);
+      entry.appendChild(countSpan);
+
+      logDiv.appendChild(entry);
+      input.value = "";
+    }
+
+
+  </script>
+</body>
+</html>
